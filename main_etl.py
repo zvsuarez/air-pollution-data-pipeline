@@ -1,11 +1,11 @@
 import requests
 import pandas as pd
 from datetime import datetime
-import air_pol_api
+import credentials
 
-def air_pol_etl():
+def airpol_etl():
     # OpenWeather Air Pollution API key
-    api = air_pol_api.API_KEY
+    api = credentials.API_KEY
 
     # Reverse geocode with SimpleMaps database
     coord = pd.read_csv('coordinates.csv').convert_dtypes()
@@ -56,6 +56,6 @@ def air_pol_etl():
     df.insert(9, 'air_quality',df['air_index'].map(aqi_map))
     df['month'].replace(month_map, inplace=True)
     df['weekday'].replace(weekday_map, inplace=True)
-    df.to_csv('air_pollution_data.csv') #--change to S3 bucket path
+    df.to_csv(f's3://openweather-zvsuarez/data/air_pollution_data_{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}.csv') #--change to S3 bucket path
 
 #air_pol_etl()
