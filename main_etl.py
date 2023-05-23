@@ -9,12 +9,12 @@ def airpol_etl():
 
     # Reverse geocode with SimpleMaps database
     coord = pd.read_csv('coordinates.csv').convert_dtypes()
-    loc_test = coord    #add .heads() for test
+    #loc_test = coord.head() for test
 
     # Loop through the csv and plug in coordinates to API request and filter data
     data = []
     
-    for row in loc_test.itertuples(index=False):
+    for row in coord.itertuples(index=False):
         col1 = row.lat
         col2 = row.lng
         req = requests.get(f'http://api.openweathermap.org/data/2.5/air_pollution?lat={col1}&lon={col2}&appid={api}')
@@ -29,6 +29,7 @@ def airpol_etl():
             "city": row.city_ascii,
             "latitude": content['coord']['lat'],
             "longitude": content['coord']['lon'],
+            "population": row.population,
             "date": datetime.fromtimestamp(content['list'][0]['dt']).strftime("%Y-%m-%d %H:%M:%S"),
             "year": datetime.fromtimestamp(content['list'][0]['dt']).year,
             "month": datetime.fromtimestamp(content['list'][0]['dt']).month,
@@ -53,7 +54,7 @@ def airpol_etl():
         7:"July", 8:"August", 9:"September", 10:"October", 11:"November", 12:"December"}
 
     df = pd.DataFrame(data)
-    df.insert(9, 'air_quality',df['air_index'].map(aqi_map))
+    df.insert(10, 'air_quality',df['air_index'].map(aqi_map))
     df['month'].replace(month_map, inplace=True)
     df['weekday'].replace(weekday_map, inplace=True)
     df.to_csv(f's3://{credentials.bucket_name}/data/air_pollution_data_{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}.csv') #--change to S3 bucket path
