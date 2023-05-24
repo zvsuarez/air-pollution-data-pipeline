@@ -1,13 +1,11 @@
 from datetime import timedelta, datetime
 from airflow import DAG
-from airflow.operators.python import PythonOperator, BranchPythonOperator
-from airflow.models import BaseOperator
-#from airflow.operators.dummy import DummyOperator
-from airflow.providers.amazon.aws.operators.redshift_data import RedshiftDataOperator
-from airflow.providers.amazon.aws.operators.s3 import S3Hook #S3ListOperator 
+from airflow.operators.python import PythonOperator
+from airflow.providers.amazon.aws.operators.s3 import S3Hook 
 from main_etl import airpol_etl
-#from botocore.client import Config
-import credentials
+import pandas as pd
+import psycopg2
+import credentials as creds
 
 
 default_args={
@@ -21,6 +19,7 @@ default_args={
         # 'queue': 'bash_queue',
         # 'pool': 'backfill',
         # 'priority_weight': 10,
+        #  start_date=datetime(2021, 1, 1),
         # 'end_date': datetime(2016, 1, 1),
         # 'wait_for_downstream': False,
         # 'sla': timedelta(hours=2),
@@ -32,66 +31,38 @@ default_args={
         # 'trigger_rule': 'all_success',
         #  description="A simple tutorial DAG",
         #  schedule=timedelta(days=1),
-        #  start_date=datetime(2021, 1, 1),
         #  catchup=False,
         #  tags=["example"]
     }
 
-"""
-def get_latest_file(ds, **kwargs):
 
-    bucket = f'{credentials.bucket_name}'
-
-    s3_list_operator = S3ListOperator(
-        task_id='s3_list_operator',
-        bucket=bucket,
-        aws_conn_id='aws_default',
-        config=Config(s3={'addressing_style': 'path'}),
-        dag=dag,
-    )
-
-    file_list = s3_list_operator.execute(context=kwargs)
+def load_to_redshift():
     
-    # Sort the file list by modified timestamp in descending order
-    sorted_files = sorted(file_list, key=lambda x: x['LastModified'], reverse=True)
+    # Get latest object in s3 to dataframe
+    s3_bucket = creds.BUCKET
+    s3_prefix = 'data/'
+    s3_hook = S3Hook(aws_conn_id=creds.AWS_CONN)
+    object_keys = s3_hook.list_keys(bucket_name=s3_bucket, prefix=s3_prefix)
+    sorted_keys = sorted(object_keys, key=lambda x: s3_hook.get_key(s3_bucket, x).last_modified, reverse=True)
+    latest_key = sorted_keys[0] if sorted_keys else None
+    s3_key_path = f's3://{s3_bucket}/{latest_key}' if latest_key else None
+    df = pd.read_csv(s3_hook.read_key(s3_key_path))
 
-    # Return the key of the latest file
-    if sorted_files:
-        return sorted_files[0]['Key']
-    else:
-        return None
-"""
-
-
-# Create Dummy operator to get latest file
-class s3NewestFileOperator(BaseOperator):
-    def __init__(self, s3_bucket, s3_prefix, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.s3_bucket = s3_bucket
-        self.s3_prefix = s3_prefix
-
-    def execute(self, context):
-        s3_hook = S3Hook(aws_conn_id='aws_default') #change aws_conn_id
-
-        # List objects in the S3 bucket
-        objects = s3_hook.list_keys(bucket_name=self.s3_bucket, prefix=self.s3_prefix)
-
-        # Sort the objects by their last modified timestamp in descending order
-        objects_sorted = sorted(objects, key=lambda x: x['LastModified'], reverse=True)
-
-        # Get the newest file
-        if objects_sorted:
-            context['ti'].xcom_push(key='newest', value=objects_sorted[0]['Key'])
-        else:
-            return None
-
-
-def process_latest_file(ds, **kwargs):
-    # The task to perform on the latest file
-    # Use the file_key variable to access the latest file key
-    file_key = kwargs['ti'].xcom_pull(task_ids='get_latest_file_task')
-    # Add your logic to process the latest file
-
+    # Establish connection to Redshift
+    conn = psycopg2.connect(host={creds.HOST}, port={creds.PORT}, dbname={creds.DBNAME},
+                            user={creds.USER}, password={creds.PASS})
+    
+    cursor = conn.cursor()
+    table = "table-name"
+    schema = "schema-name"
+    columns = ', '.join(df.columns)
+    values = [tuple(row) for row in df.to_numpy()]
+    placeholders = ', '.join(['%s'] * len(df.columns))
+    query = f"INSERT INTO {schema}.{table} ({columns}) VALUES ({placeholders})"
+    cursor.executemany(query, values)
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 
 with DAG('airflow-zvsuarez', default_args=default_args) as dag:
@@ -99,30 +70,16 @@ with DAG('airflow-zvsuarez', default_args=default_args) as dag:
     # ETL task
     run_etl = PythonOperator(
         task_id='run_etl',
-        description="ETL from API to Amazon S3",
+        description="ETL from API to S3",
         schedule_interval='@hourly', # 0 * * * *
         python_callable=airpol_etl,
     )
-    
-    # DummyOperator to get latest file task
-    #start = DummyOperator(task_id='start')
-    get_latest_file_task = s3NewestFileOperator(
-        task_id='get_latest_file_task',
-        description="Get latest file in Amazon S3",
-        retries=2,
-        s3_bucket=f'{credentials.bucket_name}',
-        s3_prefix=f'{credentials.bucket_name}/data/'
-    )
-    #end = DummyOperator(task_id='end')
-
-    process_latest_file_task = PythonOperator(
-        task_id='process_latest_file_task',
-        provide_context=True,
-        python_callable=process_latest_file
-        #depends_on_past= True
-)
 
     # Load to Redshift task
+    run_load = PythonOperator(
+        task_id='run_load',
+        description="Load data from S3 to Redshift",
+        python_callable=load_to_redshift
+    )
 
-
-    #run_etl >> get_latest_file_task >> process_latest_file_task
+    #run_etl >> run_load
