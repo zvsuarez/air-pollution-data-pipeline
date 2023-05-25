@@ -1,61 +1,61 @@
-,city_ascii,country,lat,lng,population
-0,Tokyo,Japan,35.6897,139.6922,37732000
-1,Jakarta,Indonesia,-6.175,106.8275,33756000
-2,Delhi,India,28.61,77.23,32226000
-3,Guangzhou,China,23.13,113.26,26940000
-4,Manila,Philippines,14.5958,120.9772,24922000
-5,Sao Paulo,Brazil,-23.55,-46.6333,23086000
-6,Seoul,South Korea,37.56,126.99,23016000
-7,Mexico City,Mexico,19.4333,-99.1333,21804000
-8,Cairo,Egypt,30.0444,31.2358,20296000
-9,New York,United States,40.6943,-73.9249,18972871
-10,Dhaka,Bangladesh,23.7639,90.3889,18627000
-11,Bangkok,Thailand,13.7525,100.4942,18007000
-12,Moscow,Russia,55.7558,37.6178,17332000
-13,Buenos Aires,Argentina,-34.5997,-58.3819,16710000
-14,Lagos,Nigeria,6.455,3.3841,16637000
-15,Istanbul,Turkey,41.0136,28.955,16079000
-16,Karachi,Pakistan,24.86,67.01,15738000
-17,Ho Chi Minh City,Vietnam,10.7756,106.7019,15136000
-18,Tehran,Iran,35.6892,51.3889,14148000
-19,Kinshasa,Congo,-4.325,15.3222,12836000
-20,London,United Kingdom,51.5072,-0.1275,11262000
-21,Paris,France,48.8567,2.3522,11060000
-22,Lima,Peru,-12.06,-77.0375,10320000
-23,Taipei,Taiwan,25.0375,121.5625,9078000
-24,Luanda,Angola,-8.8383,13.2344,9051000
-25,Kuala Lumpur,Malaysia,3.1478,101.6953,8911000
-26,Johannesburg,South Africa,-26.2044,28.0456,8000000
-27,Bogota,Colombia,4.7111,-74.0722,7968095
-28,Dar es Salaam,Tanzania,-6.8161,39.2803,7962000
-29,Khartoum,Sudan,15.5006,32.56,7869000
-30,Hong Kong,Hong Kong,22.3,114.2,7450000
-31,Riyadh,Saudi Arabia,24.6333,46.7167,7237000
-32,Santiago,Chile,-33.4372,-70.6506,7171000
-33,Madrid,Spain,40.4169,-3.7033,6211000
-34,Baghdad,Iraq,33.3153,44.3661,6183000
-35,Singapore,Singapore,1.3,103.8,5983000
-36,Douala,Cameroon,4.05,9.7,5768400
-37,Nairobi,Kenya,-1.2864,36.8172,5545000
-38,Toronto,Canada,43.7417,-79.3733,5429524
-39,Rangoon,Myanmar,16.795,96.16,5209541
-40,Abidjan,Côte d'Ivoire,5.3167,-4.0333,4980000
-41,Sydney,Australia,-33.8678,151.21,4840600
-42,Berlin,Germany,52.52,13.405,4473101
-43,Casablanca,Morocco,33.5333,-7.5833,4370000
-44,Kabul,Afghanistan,34.5253,69.1783,4273156
-45,Mogadishu,Somalia,2.0392,45.3419,4249083
-46,Amman,Jordan,31.9497,35.9328,4007526
-47,Algiers,Algeria,36.7539,3.0589,3415811
-48,Boankra,Ghana,6.6944,-1.4028,3348000
-49,Dubai,United Arab Emirates,25.2631,55.2972,3331420
-50,Santa Cruz,Bolivia,-17.7892,-63.1975,3151676
-51,Athens,Greece,37.9842,23.7281,3041131
-52,Addis Ababa,Ethiopia,9.03,38.74,3041002
-53,Kuwait City,Kuwait,29.3697,47.9783,3000000
-54,Budapest,Hungary,47.4925,19.0514,2997958
-55,Kyiv,Ukraine,50.45,30.5233,2963199
-56,Sanaa,Yemen,15.3483,44.2064,2957000
-57,Guatemala City,Guatemala,14.6099,-90.5252,2934841
-58,Rome,Italy,41.8931,12.4828,2872800
-59,Pyongyang,North Korea,39.0194,125.7381,2863000
+city_ascii,country,lat,lng,population
+Tokyo,Japan,35.6897,139.6922,37732000
+Jakarta,Indonesia,-6.175,106.8275,33756000
+Delhi,India,28.61,77.23,32226000
+Guangzhou,China,23.13,113.26,26940000
+Manila,Philippines,14.5958,120.9772,24922000
+Sao Paulo,Brazil,-23.55,-46.6333,23086000
+Seoul,South Korea,37.56,126.99,23016000
+Mexico City,Mexico,19.4333,-99.1333,21804000
+Cairo,Egypt,30.0444,31.2358,20296000
+New York,United States,40.6943,-73.9249,18972871
+Dhaka,Bangladesh,23.7639,90.3889,18627000
+Bangkok,Thailand,13.7525,100.4942,18007000
+Moscow,Russia,55.7558,37.6178,17332000
+Buenos Aires,Argentina,-34.5997,-58.3819,16710000
+Lagos,Nigeria,6.455,3.3841,16637000
+Istanbul,Turkey,41.0136,28.955,16079000
+Karachi,Pakistan,24.86,67.01,15738000
+Ho Chi Minh City,Vietnam,10.7756,106.7019,15136000
+Tehran,Iran,35.6892,51.3889,14148000
+Kinshasa,Congo,-4.325,15.3222,12836000
+London,United Kingdom,51.5072,-0.1275,11262000
+Paris,France,48.8567,2.3522,11060000
+Lima,Peru,-12.06,-77.0375,10320000
+Taipei,Taiwan,25.0375,121.5625,9078000
+Luanda,Angola,-8.8383,13.2344,9051000
+Kuala Lumpur,Malaysia,3.1478,101.6953,8911000
+Johannesburg,South Africa,-26.2044,28.0456,8000000
+Bogota,Colombia,4.7111,-74.0722,7968095
+Dar es Salaam,Tanzania,-6.8161,39.2803,7962000
+Khartoum,Sudan,15.5006,32.56,7869000
+Hong Kong,Hong Kong,22.3,114.2,7450000
+Riyadh,Saudi Arabia,24.6333,46.7167,7237000
+Santiago,Chile,-33.4372,-70.6506,7171000
+Madrid,Spain,40.4169,-3.7033,6211000
+Baghdad,Iraq,33.3153,44.3661,6183000
+Singapore,Singapore,1.3,103.8,5983000
+Douala,Cameroon,4.05,9.7,5768400
+Nairobi,Kenya,-1.2864,36.8172,5545000
+Toronto,Canada,43.7417,-79.3733,5429524
+Rangoon,Myanmar,16.795,96.16,5209541
+Abidjan,Côte d'Ivoire,5.3167,-4.0333,4980000
+Sydney,Australia,-33.8678,151.21,4840600
+Berlin,Germany,52.52,13.405,4473101
+Casablanca,Morocco,33.5333,-7.5833,4370000
+Kabul,Afghanistan,34.5253,69.1783,4273156
+Mogadishu,Somalia,2.0392,45.3419,4249083
+Amman,Jordan,31.9497,35.9328,4007526
+Algiers,Algeria,36.7539,3.0589,3415811
+Boankra,Ghana,6.6944,-1.4028,3348000
+Dubai,United Arab Emirates,25.2631,55.2972,3331420
+Santa Cruz,Bolivia,-17.7892,-63.1975,3151676
+Athens,Greece,37.9842,23.7281,3041131
+Addis Ababa,Ethiopia,9.03,38.74,3041002
+Kuwait City,Kuwait,29.3697,47.9783,3000000
+Budapest,Hungary,47.4925,19.0514,2997958
+Kyiv,Ukraine,50.45,30.5233,2963199
+Sanaa,Yemen,15.3483,44.2064,2957000
+Guatemala City,Guatemala,14.6099,-90.5252,2934841
+Rome,Italy,41.8931,12.4828,2872800
+Pyongyang,North Korea,39.0194,125.7381,2863000
