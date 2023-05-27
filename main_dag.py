@@ -3,8 +3,8 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.amazon.aws.operators.s3 import S3Hook 
 from main_etl import airpol_etl
-import pandas as pd
-import psycopg2
+#import pandas as pd
+import boto3
 import credentials as creds
 
 
@@ -16,6 +16,7 @@ default_args={
         "email_on_retry": False,
         "retries": 1,
         "retry_delay": timedelta(minutes=1),
+        "schedule":'@hourly',
         # 'queue': 'bash_queue',
         # 'pool': 'backfill',
         # 'priority_weight': 10,
@@ -30,7 +31,6 @@ default_args={
         # 'sla_miss_callback': yet_another_function, # or list of functions
         # 'trigger_rule': 'all_success',
         #  description="A simple tutorial DAG",
-        #  schedule=timedelta(days=1),
         #  catchup=False,
         #  tags=["example"]
     }
@@ -46,40 +46,55 @@ def load_to_redshift():
     sorted_keys = sorted(object_keys, key=lambda x: s3_hook.get_key(s3_bucket, x).last_modified, reverse=True)
     latest_key = sorted_keys[0] if sorted_keys else None
     s3_key_path = f's3://{s3_bucket}/{latest_key}' if latest_key else None
-    df = pd.read_csv(s3_hook.read_key(s3_key_path))
-
-    # Establish connection to Redshift
-    conn = psycopg2.connect(host={creds.HOST}, port={creds.PORT}, dbname={creds.DBNAME},
-                            user={creds.USER}, password={creds.PASS})
+    #df = pd.read_csv(s3_hook.read_key(s3_key_path))
     
-    cursor = conn.cursor()
-    table = "table-name"
-    schema = "schema-name"
+    
+    # Use this only if redshift has provisioned clusters
+    """
     columns = ', '.join(df.columns)
     values = [tuple(row) for row in df.to_numpy()]
     placeholders = ', '.join(['%s'] * len(df.columns))
-    query = f"INSERT INTO {schema}.{table} ({columns}) VALUES ({placeholders})"
+    query = 'STATEMENT'
+    
+    conn = psycopg2.connect(host={creds.HOST}, port={creds.PORT}, dbname={creds.DBNAME},
+                            user={creds.USER}, password={creds.PASS})
+    cursor = conn.cursor()
+    schema = "schema-name"
+    
     cursor.executemany(query, values)
     conn.commit()
     cursor.close()
     conn.close()
+    """
 
-
+    # Establish connection to redshift serverless
+    client = boto3.client('redshift-data')
+    copy_command = f"""COPY {creds.SCHEMA}.{creds.TBNAME}
+    FROM {s3_key_path} IAM_ROLE {creds.REDSHIFT_ROLE} FORMAT CSV DELIMITER ',' IGNOREHEADER 1;
+    """
+    response=client.execute_statement(
+        Database={creds.DBNAME},
+        DbUser={creds.USER},
+        Sql=copy_command,
+        WithEvent=False,
+        WorkgroupName={creds.WORKGROUP}
+    )
+    return response
+    
+    
+    
 with DAG('airflow-zvsuarez', default_args=default_args) as dag:
     
     # ETL task
     run_etl = PythonOperator(
         task_id='run_etl',
-        description="ETL from API to S3",
-        schedule_interval='@hourly', # 0 * * * *
         python_callable=airpol_etl,
     )
 
     # Load to Redshift task
     run_load = PythonOperator(
         task_id='run_load',
-        description="Load data from S3 to Redshift",
         python_callable=load_to_redshift
     )
 
-    #run_etl >> run_load
+    run_etl >> run_load
