@@ -30,7 +30,7 @@ def airpol_etl():
             "latitude": content['coord']['lat'],
             "longitude": content['coord']['lon'],
             "population": row.population,
-            "date": datetime.fromtimestamp(content['list'][0]['dt']).strftime("%Y-%m-%d %H:%M:%S"),
+            "date_time": datetime.fromtimestamp(content['list'][0]['dt']).strftime("%Y-%m-%d %H:%M:%S"),
             "year": datetime.fromtimestamp(content['list'][0]['dt']).year,
             "month": datetime.fromtimestamp(content['list'][0]['dt']).month,
             "day": datetime.fromtimestamp(content['list'][0]['dt']).day,
@@ -58,5 +58,3 @@ def airpol_etl():
     df['month'].replace(month_map, inplace=True)
     df['weekday'].replace(weekday_map, inplace=True)
     df.to_csv(f's3://{creds.BUCKET}/data/air_pollution_data_{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}.csv') #--change to S3 bucket path
-
-#airpol_etl()
