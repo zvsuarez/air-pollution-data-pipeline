@@ -1,0 +1,23 @@
+CREATE TABLE IF NOT EXISTS airpol (
+    id INT PRIMARY KEY,
+    country VARCHAR(50) UNIQUE,
+    city VARCHAR(50),
+    latitude DECIMAL(8,6) UNIQUE,
+    longitude DECIMAL(8,6) UNIQUE,
+    population INT,
+    date_time DATE,
+    year INT,
+    month VARCHAR(15),
+    day INT,
+    weekday VARCHAR(15),
+    air_quality VARCHAR(15),
+    air_index INT,
+    o3 DECIMAL(18,18),
+    nh3 DECIMAL(18,18),
+    co DECIMAL(18,18),
+    no DECIMAL(18,18),
+    no2 DECIMAL(18,18),
+    so2 DECIMAL(18,18),
+    pm2_5 DECIMAL(18,18),
+    pm10 DECIMAL(18,18)
+)
