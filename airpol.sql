@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS airpol (
-    id INT PRIMARY KEY,
+    id VARCHAR(10) PRIMARY KEY NOT NULL,
     country VARCHAR(50) UNIQUE,
     city VARCHAR(50),
     latitude DECIMAL(8,6) UNIQUE,
