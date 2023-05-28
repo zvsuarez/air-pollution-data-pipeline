@@ -63,4 +63,4 @@ def airpol_etl():
     df.insert(11, 'air_quality',df['air_index'].map(aqi_map))
     df['month'].replace(month_map, inplace=True)
     df['weekday'].replace(weekday_map, inplace=True)
-    df.to_csv(f's3://{creds.BUCKET}/data/air_pollution_data_{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}.csv') #--change to S3 bucket path
+    df.to_csv(f's3://{creds.BUCKET}/data/air_pollution_data_{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}.csv', index=False) #--change to S3 bucket path
