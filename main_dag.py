@@ -3,20 +3,19 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.providers.amazon.aws.operators.s3 import S3Hook 
 from main_etl import airpol_etl
-#import pandas as pd
 import boto3
 import credentials as creds
 
 
 default_args={
         "depends_on_past": False,
-        "start_date": datetime(2021, 1, 1),
+        "start_date": datetime(2023, 5, 28),
         "email": ["zyrvsuarez07@gmail.com"],
         "email_on_failure": False,
         "email_on_retry": False,
         "retries": 1,
-        "retry_delay": timedelta(minutes=1),
-        "schedule":'@hourly',
+        "retry_delay": timedelta(minutes=1)
+        #"schedule":'@hourly'
         # 'queue': 'bash_queue',
         # 'pool': 'backfill',
         # 'priority_weight': 10,
@@ -43,14 +42,14 @@ def load_to_redshift():
     s3_prefix = 'data/'
     s3_hook = S3Hook(aws_conn_id=creds.AWS_CONN)
     object_keys = s3_hook.list_keys(bucket_name=s3_bucket, prefix=s3_prefix)
-    sorted_keys = sorted(object_keys, key=lambda x: s3_hook.get_key(s3_bucket, x).last_modified, reverse=True)
+    #sorted_keys = sorted(object_keys, key=lambda x: x['LastModified'], reverse=True)
+    sorted_keys = sorted(object_keys, key=lambda x: s3_hook.get_key(bucket_name=s3_bucket, key=x).last_modified, reverse=True)
     latest_key = sorted_keys[0] if sorted_keys else None
     s3_key_path = f's3://{s3_bucket}/{latest_key}' if latest_key else None
-    #df = pd.read_csv(s3_hook.read_key(s3_key_path))
-    
     
     # Use this only if redshift has provisioned clusters
     """
+    df = pd.read_csv(s3_hook.read_key(s3_key_path))
     columns = ', '.join(df.columns)
     values = [tuple(row) for row in df.to_numpy()]
     placeholders = ', '.join(['%s'] * len(df.columns))
@@ -68,7 +67,7 @@ def load_to_redshift():
     """
 
     # Establish connection to redshift serverless
-    client = boto3.client('redshift-data')
+    client = boto3.client('redshift-data', region_name=creds.REGION, aws_access_key_id=creds.AWS_ACCESS_KEY,aws_secret_access_key=creds.AWS_SECRET_KEY)
     copy_command = f"""COPY {creds.SCHEMA}.{creds.TBNAME}
     FROM {s3_key_path} IAM_ROLE {creds.REDSHIFT_ROLE} FORMAT CSV DELIMITER ',' IGNOREHEADER 1;
     """
@@ -80,7 +79,6 @@ def load_to_redshift():
         WorkgroupName={creds.WORKGROUP}
     )
     return response
-    
     
     
 with DAG('airflow-zvsuarez', default_args=default_args) as dag:
@@ -97,4 +95,4 @@ with DAG('airflow-zvsuarez', default_args=default_args) as dag:
         python_callable=load_to_redshift
     )
 
-    run_etl >> run_load
+    run_etl>>run_load
