@@ -2,14 +2,19 @@ import requests
 import pandas as pd
 from datetime import datetime
 import credentials as creds
+import uuid
+import os
+import s3fs
 
 def airpol_etl():
     # OpenWeather Air Pollution API key
     api = creds.API_KEY
 
     # Reverse geocode with SimpleMaps database
-    coord = pd.read_csv('coordinates.csv').convert_dtypes()
-    #loc_test = coord.head() for test
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    csv_file_path = os.path.join(current_dir, 'coordinates.csv')
+    coord = pd.read_csv(csv_file_path).convert_dtypes()
+    #loc_test = coord.head() #for test
 
     # Loop through the csv and plug in coordinates to API request and filter data
     data = []
@@ -25,6 +30,7 @@ def airpol_etl():
             continue
         
         filtered_req = {
+            "id": str(uuid.uuid4())[:8],
             "country": row.country,
             "city": row.city_ascii,
             "latitude": content['coord']['lat'],
@@ -36,14 +42,14 @@ def airpol_etl():
             "day": datetime.fromtimestamp(content['list'][0]['dt']).day,
             "weekday": datetime.fromtimestamp(content['list'][0]['dt']).weekday(),
             "air_index": content['list'][0]['main']['aqi'],
-            "ozone": content['list'][0]['components']['o3'],
-            "ammonia": content['list'][0]['components']['nh3'],
-            "carbon_monoxide": content['list'][0]['components']['co'],
-            "nitrogen_monoxide": content['list'][0]['components']['no'],
-            "nitrogen_dioxide": content['list'][0]['components']['no2'],
-            "sulfur_dioxide": content['list'][0]['components']['so2'],
-            "fine_particles": content['list'][0]['components']['pm2_5'],
-            "coarse_particulate": content['list'][0]['components']['pm10']
+            "o3": content['list'][0]['components']['o3'],
+            "nh3": content['list'][0]['components']['nh3'],
+            "co": content['list'][0]['components']['co'],
+            "no": content['list'][0]['components']['no'],
+            "no2": content['list'][0]['components']['no2'],
+            "so2": content['list'][0]['components']['so2'],
+            "pm2_5": content['list'][0]['components']['pm2_5'],
+            "pm10": content['list'][0]['components']['pm10']
         }
         data.append(filtered_req)
 
@@ -54,7 +60,7 @@ def airpol_etl():
         7:"July", 8:"August", 9:"September", 10:"October", 11:"November", 12:"December"}
 
     df = pd.DataFrame(data)
-    df.insert(10, 'air_quality',df['air_index'].map(aqi_map))
+    df.insert(11, 'air_quality',df['air_index'].map(aqi_map))
     df['month'].replace(month_map, inplace=True)
     df['weekday'].replace(weekday_map, inplace=True)
     df.to_csv(f's3://{creds.BUCKET}/data/air_pollution_data_{datetime.now().strftime("%Y-%m-%d %H:%M:%S")}.csv') #--change to S3 bucket path
