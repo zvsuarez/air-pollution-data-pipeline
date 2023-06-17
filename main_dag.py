@@ -9,13 +9,13 @@ import credentials as creds
 
 default_args={
         "depends_on_past": False,
-        "start_date": datetime(2023, 5, 28),
+        "start_date": datetime(2023, 6, 18, 8, 0, 0),
         "email": ["zyrvsuarez07@gmail.com"],
         "email_on_failure": False,
         "email_on_retry": False,
         "retries": 1,
-        "retry_delay": timedelta(minutes=1)
-        #"schedule":'@hourly'
+        "retry_delay": timedelta(minutes=1),
+        "schedule":'0 8 * * *'
         # 'queue': 'bash_queue',
         # 'pool': 'backfill',
         # 'priority_weight': 10,
@@ -68,15 +68,15 @@ def load_to_redshift():
 
     # Establish connection to redshift serverless
     client = boto3.client('redshift-data', region_name=creds.REGION, aws_access_key_id=creds.AWS_ACCESS_KEY,aws_secret_access_key=creds.AWS_SECRET_KEY)
-    copy_command = f"""COPY {creds.SCHEMA}.{creds.TBNAME}
-    FROM {s3_key_path} IAM_ROLE {creds.REDSHIFT_ROLE} FORMAT CSV DELIMITER ',' IGNOREHEADER 1;
+    copy_command = f"""COPY {creds.DBNAME}.{creds.SCHEMA}.{creds.TBNAME}
+    FROM {s3_key_path} IAM_ROLE {creds.REDSHIFT_ROLE} FORMAT AS CSV DELIMITER ',' QUOTE '"' IGNOREHEADER 1 BLANKSASNULL EMPTYASNULL REGION AS {creds.REGION};
     """
+
     response=client.execute_statement(
-        Database={creds.DBNAME},
-        DbUser={creds.USER},
+        Database=creds.DBNAME,
         Sql=copy_command,
         WithEvent=False,
-        WorkgroupName={creds.WORKGROUP}
+        WorkgroupName=creds.WORKGROUP
     )
     return response
     
@@ -95,4 +95,4 @@ with DAG('airflow-zvsuarez', default_args=default_args) as dag:
         python_callable=load_to_redshift
     )
 
-    run_etl>>run_load
+    run_etl >> run_load
