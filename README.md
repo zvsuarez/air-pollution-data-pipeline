@@ -12,7 +12,7 @@ Data sources include the Openweather API and Simplemaps dataset. The API call pr
 
 ### 2. ETL
 
-Airflow is deployed on an EC2 instance together with the scripts, configurations, and credentials. Each script has its own purpose, and it contains either the main extract & transform process, or the DAG which contains the `etl` and `load` task. After extracting and transforming the data it is ingested to S3, which is subsequently checked by a `load` task. The load task checks S3 for the latest object stored, and copies it into a Redshift serverless table which servers as the sink.
+Airflow is deployed on an EC2 instance together with the scripts, configurations, and credentials. Each script has its own purpose, and it contains either the main extract & transform process, or the DAG which contains the `etl` and `load` task. After extracting and transforming the data it is ingested to S3, which is subsequently checked by a `load` task. The load task checks S3 for the latest object stored, and copies it into a Redshift serverless table which serves as the sink.
 
 ### 3. Dashboard
 
