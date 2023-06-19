@@ -12,11 +12,11 @@ Data sources include the Openweather API and Simplemaps dataset. The API call pr
 
 ### 2. ETL
 
-Airflow is deployed on an EC2 instance together with the scripts, configurations, and credentials. Each script has its own purpose, and it contains either the main extract & transform process, or the DAG which contains the `etl` and `load` task. After extracting and transforming the data it is ingested to S3, which is subsequently checked by a `load` task. The load task checks S3 for the latest object stored, and copies it into a Redshift serverless table for bulk insert.
+Airflow is deployed on an EC2 instance together with the scripts, configurations, and credentials. Each script has its own purpose, and it contains either the main extract & transform process, or the DAG which contains the `etl` and `load` task. After extracting and transforming the data it is ingested to S3, which is subsequently checked by a `load` task. The load task checks S3 for the latest object stored, and copies it into a Redshift serverless table which servers as the sink.
 
 ### 3. Dashboard
 
-Tableau is connected to the table in Redshift, and analytics is configured based on several questions that permits to be analysed. These contain the list of countries ranked by `population`, `air quality`, different `parameter` levels, and graphs.
+Tableau is connected to the table in Redshift, and analytics is configured based on several questions to be analysed. These contain the list of countries ranked by `population`, `air quality`, different `parameter` levels, and graphs.
 
 To know what parameters the API provide, refer to this: [Air Pollution API](https://openweathermap.org/api/air-pollution).
 
@@ -24,4 +24,4 @@ Note: As of this moment, data accumulation is in progress and the dashboard is n
 
 ### 4. IAM (Identity Access Management)
 
-Roles attached to services vary based on their interactions with other components. AWS managed keys and custom managed keys were both utilised which depend on how flexible the requirements. Roles attached to the EC2 instance have permissions in S3 and Redshift Data. Redshift Serverless workgroup also have permissions in S3, and a customer managed policy `Redshift Commands` for allowing to run SQL commands to copy, load/unload, query and analyse data. Service roles are automatically available.
+Roles attached to services vary based on their interactions with other components. AWS managed keys and custom managed keys were both utilised which depend on how flexible the requirements are. Roles attached to the EC2 instance have permissions in S3 and Redshift Data. Redshift Serverless workgroup also have permissions in S3, and a customer managed policy `Redshift Commands` for allowing to run SQL commands to copy, load/unload, query and analyse data. Service roles are automatically available.
