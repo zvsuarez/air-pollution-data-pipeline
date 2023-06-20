@@ -9,13 +9,14 @@ import credentials as creds
 
 default_args={
         "depends_on_past": False,
-        "start_date": datetime(2023, 6, 18, 8, 0, 0),
+        "start_date": datetime(2023, 6, 19, 8, 0, 0),
         "email": ["zyrvsuarez07@gmail.com"],
         "email_on_failure": False,
         "email_on_retry": False,
         "retries": 1,
         "retry_delay": timedelta(minutes=1),
-        "schedule":'0 8 * * *'
+        "schedule":'0 8 * * *',
+        "catchup":True
         # 'queue': 'bash_queue',
         # 'pool': 'backfill',
         # 'priority_weight': 10,
@@ -30,7 +31,6 @@ default_args={
         # 'sla_miss_callback': yet_another_function, # or list of functions
         # 'trigger_rule': 'all_success',
         #  description="A simple tutorial DAG",
-        #  catchup=False,
         #  tags=["example"]
     }
 
