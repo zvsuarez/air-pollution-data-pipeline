@@ -1,6 +1,6 @@
 # Air Pollution Data Analytics Pipeline
 
-This is a project that implements an end-to-end data analytics pipeline. Data is extracted from an API and a transformed dataset with geocode containing the top 60 populated cities in the world. The range is limited to 60 countries to comply with the free account rate limit of the API. The pipeline is configured to run every 8:00 UTC, but it can be configured to run at any schedule and interval however it depends on the limitation of services required.
+This is a project that implements an end-to-end data analytics pipeline. Data is extracted from an API and a transformed dataset with geocode containing the top 60 populated cities in the world. The range is limited to 60 countries to comply with the free account rate limit of the API.
 
 ![Air Pollution Data Analytics Pipeline](https://github.com/zvsuarez/air-pollution-data-pipeline/assets/64736073/d11c24e6-9221-4fdc-98aa-954cc52cebfb)
 
@@ -8,7 +8,7 @@ This is a project that implements an end-to-end data analytics pipeline. Data is
 
 ### 1. Data Source (OpenWeather + Simplemaps)
 
-Data sources include the Openweather API and Simplemaps dataset. The API call provides the present air pollution data, while the dataset from Simplemaps is transformed to only store the top 60 most populated cities with its geocode information. The coordinates from the dataset is plugged into the API call to retrieve the pollution data.
+Data sources include the Openweather API and Simplemaps dataset. The API call provides historical air pollution data, while the dataset from Simplemaps is transformed to only store the top 60 most populated cities with its geocode information. The coordinates from the dataset is plugged into the API call to retrieve the pollution data.
 
 ### 2. Orchestration (Airflow/Amazon EC2)
 
@@ -24,7 +24,7 @@ Tableau is connected to the table in Redshift, and analytics is configured based
 
 To know what parameters the API provide, refer to this: [Air Pollution API](https://openweathermap.org/api/air-pollution).
 
-Note: As of this moment, data accumulation is in progress and the dashboard is not yet finished. The public URL of the dash will be posted here.
+Note: As of this moment, ~~data accumulation is in progress and~~ the dashboard is not yet finished. The public URL of the dash will be posted here.
 
 ### 5. IAM (Identity Access Management)
 
