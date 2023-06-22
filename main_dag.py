@@ -9,14 +9,14 @@ import credentials as creds
 
 default_args={
         "depends_on_past": False,
-        "start_date": datetime(2023, 6, 19, 8, 0, 0),
+        "start_date": datetime(2023, 6, 22, 12, 0, 0),
         "email": ["zyrvsuarez07@gmail.com"],
         "email_on_failure": False,
         "email_on_retry": False,
         "retries": 1,
-        "retry_delay": timedelta(minutes=1),
-        "schedule":'0 8 * * *',
-        "catchup":True
+        "retry_delay": timedelta(minutes=1)
+        #"schedule":'0 8 * * *',
+        #"catchup":True
         # 'queue': 'bash_queue',
         # 'pool': 'backfill',
         # 'priority_weight': 10,
