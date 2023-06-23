@@ -4,7 +4,7 @@ from airflow.operators.python import PythonOperator
 #from airflow.providers.amazon.aws.operators.s3 import S3Hook
 from main_etl import airpol_etl
 import boto3
-import credentials as creds
+import credentials as crd
 
 
 default_args={
@@ -38,8 +38,8 @@ def load_to_redshift():
     
     # Get latest object in S3
     s3_client = boto3.client('s3')
-    s3_bucket = creds.BUCKET
-    s3_access_point= creds.BUCKET_AP
+    s3_bucket = crd.BUCKET
+    s3_access_point= crd.BUCKET_AP
     s3_prefix = 'data/'
     response= s3_client.list_objects_v2(Bucket=s3_access_point, Prefix=s3_prefix)
     if 'Contents' in response:
@@ -48,10 +48,10 @@ def load_to_redshift():
     s3_key_path = f's3://{s3_bucket}/{latest_key}'
 
     # Alternative get latest key in S3 bucket
-    """s3_bucket = creds.BUCKET
-    #s3_bucket_ARN= creds.BUCKET_ARN
+    """s3_bucket = crd.BUCKET
+    #s3_bucket_ARN= crd.BUCKET_ARN
     s3_prefix = 'data/'
-    s3_hook = S3Hook(aws_conn_id=creds.AWS_CONN)
+    s3_hook = S3Hook(aws_conn_id=crd.AWS_CONN)
     object_keys = s3_hook.list_keys(bucket_name=s3_bucket, prefix=s3_prefix)
     #sorted_keys = sorted(object_keys, key=lambda x: x['LastModified'], reverse=True)
     sorted_keys = sorted(object_keys, key=lambda x: s3_hook.get_key(bucket_name=s3_bucket, key=x).last_modified, reverse=True)
@@ -59,14 +59,14 @@ def load_to_redshift():
     s3_key_path = f's3://{s3_bucket}/{latest_key}' if latest_key else None"""
     
     # Establish connection to redshift serverless
-    client = boto3.client('redshift-data', region_name=creds.REGION, aws_access_key_id=creds.AWS_ACCESS_KEY,aws_secret_access_key=creds.AWS_SECRET_KEY)
-    copy_command = f"""COPY {creds.DBNAME}.{creds.SCHEMA}.{creds.TBNAME} FROM '{s3_key_path}' IAM_ROLE '{creds.REDSHIFT_ROLE}' FORMAT AS CSV DELIMITER ',' QUOTE '"' IGNOREHEADER 1 BLANKSASNULL EMPTYASNULL REGION AS '{creds.REGION}'"""
+    client = boto3.client('redshift-data', region_name=crd.REGION, aws_access_key_id=crd.AWS_ACCESS_KEY,aws_secret_access_key=crd.AWS_SECRET_KEY)
+    copy_command = f"""COPY {crd.DBNAME}.{crd.SCHEMA}.{crd.TBNAME} FROM '{s3_key_path}' IAM_ROLE '{crd.REDSHIFT_ROLE}' FORMAT AS CSV DELIMITER ',' QUOTE '"' IGNOREHEADER 1 BLANKSASNULL EMPTYASNULL REGION AS '{crd.REGION}'"""
 
     response = client.execute_statement(
-        Database=creds.DBNAME,
+        Database=crd.DBNAME,
         Sql=copy_command,
         WithEvent=False,
-        WorkgroupName=creds.WORKGROUP
+        WorkgroupName=crd.WORKGROUP
     )
     return response
 
@@ -77,8 +77,8 @@ def load_to_redshift():
     values = [tuple(row) for row in df.to_numpy()]
     placeholders = ', '.join(['%s'] * len(df.columns))
     query = <query statement>
-    conn = psycopg2.connect(host={creds.HOST}, port={creds.PORT}, dbname={creds.DBNAME},
-                            user={creds.USER}, password={creds.PASS})
+    conn = psycopg2.connect(host={crd.HOST}, port={crd.PORT}, dbname={crd.DBNAME},
+                            user={crd.USER}, password={crd.PASS})
     cursor = conn.cursor()
     schema = "schema-name"
     cursor.executemany(query, values)
