@@ -2,9 +2,11 @@
 
 This is a project that implements an end-to-end data analytics pipeline. Data is extracted from an API and a transformed dataset with geocode containing the top 60 populated cities in the world. The range is limited to 60 countries to comply with the free account rate limit of the API.
 
+## Architecture
+
 ![Air Pollution Data Analytics Pipeline](https://github.com/zvsuarez/air-pollution-data-pipeline/assets/64736073/d11c24e6-9221-4fdc-98aa-954cc52cebfb)
 
-## Architecture
+## Workflow
 
 ### 1. Data Source (OpenWeather + Simplemaps)
 
