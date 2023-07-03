@@ -4,7 +4,7 @@ This is a project that implements an end-to-end data analytics pipeline. Data is
 
 ## Architecture
 
-![Air Pollution Data Analytics Pipeline](https://github.com/zvsuarez/air-pollution-data-pipeline/assets/64736073/d11c24e6-9221-4fdc-98aa-954cc52cebfb)
+![Architecture](https://github.com/zvsuarez/air-pollution-data-pipeline/assets/64736073/504c162c-8fcd-4e31-bd77-bbc0fcb0cf1a)
 
 ## Workflow
 
