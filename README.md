@@ -24,7 +24,7 @@ Python scripts contain either the main extract & transform process, or the DAG w
 
 Tableau is connected to the table in Redshift, and analytics is configured based on several questions to be analysed. These contain the list of countries ranked by `population`, `air quality`, different `parameter` levels, and graphs.
 
-To know what parameters the API provide, refer to this: [Air Pollution API](https://openweathermap.org/api/air-pollution). You can view the dashboard here: [Air Pollution Dashboard](https://public.tableau.com/views/AirPollutionDashboard_16877125725160/Dashboard1?:language=en-US&:display_count=n&:origin=viz_share_link).
+To know what parameters the API provide, refer to this: [Air Pollution API](https://openweathermap.org/api/air-pollution). You can view the dashboard here: [Air Pollution Dashboard](https://public.tableau.com/views/AirPollutionDashboard_16877125725160/Dashboard2?:language=en-US&:display_count=n&:origin=viz_share_link).
 
 ### 5. IAM (Identity Access Management)
 
